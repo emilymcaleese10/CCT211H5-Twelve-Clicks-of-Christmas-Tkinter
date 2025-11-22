@@ -11,6 +11,9 @@ import sys
 
 DB_FILE = "advent.db"
 ASSETS_DIR = "assets"
+peach = "#dba582"
+WIDTH = 760
+HEIGHT = 360
 
 # Advent mapping: door number -> date (Dec 13..24)
 DOOR_DATES = [(13 + i) for i in range(12)]  # [13,14,...,24] iterable
@@ -53,7 +56,7 @@ class EditorApp(tk.Tk): # editor window
 
     def _load_fonts(self):
         self.title_font = ("Slight", 36, "bold")
-        self.small_font = ("Hina-Mincho", 12)
+        self.small_font = ("Georgia", 16, "bold")
 
     def _build_menu(self):
         menubar = tk.Menu(self)
@@ -85,19 +88,7 @@ class EditorApp(tk.Tk): # editor window
 
         star_label = tk.Label(root, image=self.star_img, bg="white", borderwidth=0, highlightthickness=0)
         star_label.place(relx=1.0, y=10, anchor="ne")   # top-right
-    
-    def show_welcome(self):
-        self.clear_frame()
-
-        root = tk.Frame(self, bg="white")
-        root.pack(expand=True, fill="both")
-        
-        self.show_background_images(root)
-    
-        card = tk.Canvas(root, width=760, height=360, bg="white", highlightthickness=0)
-        card.pack(pady=40)
-
-        def round_rect(x1, y1, x2, y2, r=35, **kwargs):
+    def round_rect(self, canvas, x1, y1, x2, y2, r=35, **kwargs):
             points = [
                 x1+r, y1,
                 x2-r, y1,
@@ -112,15 +103,30 @@ class EditorApp(tk.Tk): # editor window
                 x1, y1+r,
                 x1, y1
             ]
-            return card.create_polygon(points, smooth=True, **kwargs)
+            return canvas.create_polygon(points, smooth=True, **kwargs)
+    
+    def pill(self, canvas, x1, y1, x2, y2, **kwargs):
+            r = (y2 - y1) // 2
+            canvas.create_oval(x1, y1, x1 + 2*r, y2, **kwargs)
+            canvas.create_oval(x2 - 2*r, y1, x2, y2, **kwargs)
+            canvas.create_rectangle(x1 + r, y1, x2 - r, y2, **kwargs)
 
-        peach = "#dba582"
+    def show_welcome(self):
+        self.clear_frame()
+
+        root = tk.Frame(self, bg="white")
+        root.pack(expand=True, fill="both")
+        
+        self.show_background_images(root)
+    
+        card = tk.Canvas(root, width=760, height=360, bg="white", highlightthickness=0)
+        card.pack(pady=40)
 
         # Draw rounded rectangle
-        round_rect(20, 20, 740, 340, r=45, fill=peach, outline=peach)
+        self.round_rect(card, 20, 20, 740, 340, r=45, fill=peach, outline=peach)
 
         card.create_text(
-            380, 70,
+            WIDTH/2, 70,
             text="YOUR VERY OWN",
             font=("Georgia", 16, "bold"),
             fill="white"
@@ -131,13 +137,13 @@ class EditorApp(tk.Tk): # editor window
         self.welcome_img = ImageTk.PhotoImage(img)
 
         card.create_image(
-            380,           # center X of canvas (760 / 2)
+            WIDTH/2,           # center X of canvas (760 / 2)
             180,           # center vertically within card
             image=self.welcome_img
         )
 
         card.create_text(
-            380, 280,
+            WIDTH/2, 280,
             text="IS WAITING FOR YOU",
             font=("Georgia", 16),
             fill="white"
@@ -147,14 +153,7 @@ class EditorApp(tk.Tk): # editor window
         btn_holder = tk.Canvas(root, width=230, height=70, bg="white", highlightthickness=0)
         btn_holder.pack()
 
-        # Pill shape
-        def pill(canvas, x1, y1, x2, y2, **kwargs):
-            r = (y2 - y1) // 2
-            canvas.create_oval(x1, y1, x1 + 2*r, y2, **kwargs)
-            canvas.create_oval(x2 - 2*r, y1, x2, y2, **kwargs)
-            canvas.create_rectangle(x1 + r, y1, x2 - r, y2, **kwargs)
-
-        pill(btn_holder, 10, 10, 220, 60, fill=peach, outline=peach)
+        self.pill(btn_holder, 10, 10, 220, 60, fill=peach, outline=peach)
 
         # Real clickable button on top
         btn = tk.Button(
@@ -173,18 +172,43 @@ class EditorApp(tk.Tk): # editor window
         frame = tk.Frame(self, bg="white")
         frame.pack(expand=True, fill="both")
 
-        lbl = tk.Label(frame, text="Who is your advent calendar for?", font=self.small_font, bg="white")
-        lbl.pack(pady=20)
-
         self.show_background_images(frame)
+        card = tk.Canvas(frame, width=700, height=360, bg="white", highlightthickness=0)
+        card.pack(pady=40)
 
+        self.round_rect(card, 10, 10, 690, 250, r=45, fill=peach, outline=peach)
+
+        card.create_text(
+            380, 70,
+            text="WHO IS YOUR ADVENT CALENDAR FOR?",
+            font=("Georgia", 16, "bold"),
+            fill="white"
+        )
+
+        # Input bar
         self.name_var = tk.StringVar()
-        entry = ttk.Entry(frame, textvariable=self.name_var, width=30)
-        entry.pack(pady=5)
+        style = ttk.Style()
+        style.configure("Large.TEntry", padding=10, font=("Georgia", 16))
+        entry = ttk.Entry(card, textvariable=self.name_var, width=50, style="Large.TEntry")
+        card.create_window(WIDTH/2, 150, window=entry)
         entry.focus()
 
-        btn_enter = ttk.Button(frame, text="ENTER", command=self.save_name_and_show_doors)
-        btn_enter.pack(pady=10)
+        # Button
+        btn_holder = tk.Canvas(frame, width=230, height=70, bg="white", highlightthickness=0)
+        btn_holder.pack()
+
+        self.pill(btn_holder, 10, 10, 220, 60, fill=peach, outline=peach)
+
+        # Real clickable button on top
+        btn = tk.Button(
+            btn_holder, text="SAVE",
+            command=self.save_name_and_show_doors,
+            bg=peach, fg="white",
+            font=("Georgia", 16, "bold"),
+            relief="flat", activebackground=peach
+        )
+
+        btn_holder.create_window(115, 35, window=btn)
 
     def save_name_and_show_doors(self):
         name = self.name_var.get().strip()
@@ -199,30 +223,44 @@ class EditorApp(tk.Tk): # editor window
 
     def show_doors_page(self):
         self.clear_frame()
-        topbar = tk.Frame(self, bg="white")
-        topbar.pack(side="top", fill="x")
-        lbl = tk.Label(topbar, text="Doors", font=self.small_font, bg="white")
-        lbl.pack(side="left", padx=10, pady=10)
+        frame = tk.Frame(self, bg="white")
+        frame.pack(expand=True, fill="both")
+        self.show_background_images(frame)
 
-        # Grid area for doors
-        grid = tk.Frame(self, bg="white")
-        grid.pack(expand=True, fill="both", padx=20, pady=20)
-
-        # 12 doors, 4 columns x 3 rows
-        for i in range(12):
-            r = i // 4
-            c = i % 4
-            doornum = i + 1
-            btn = tk.Button(grid, text=str(doornum), width=12, height=6,
-                            command=lambda dn=doornum: self.open_door_editor(dn))
-            btn.grid(row=r, column=c, padx=12, pady=12)
-
-        # Export dropdown (as requested in top-left). Also available in menu.
-        export_btn = ttk.Menubutton(topbar, text="Export")
+        # TOP BAR (export button/title)
+        top_bar = tk.Frame(frame, bg="white")
+        top_bar.pack(fill="x")
+        export_btn = ttk.Menubutton(top_bar, text="Export")
         export_menu = tk.Menu(export_btn, tearoff=0)
         export_menu.add_command(label="Export Calendar", command=self.export_calendar)
         export_btn["menu"] = export_menu
         export_btn.pack(side="left", padx=10)
+
+        title = tk.Label(top_bar, 
+                         text="Edit Calendar",
+                         font=("Georgia", 30), bg="white", padx=50, pady=20)
+        title.pack(side="left")
+
+        # GRID
+        center = tk.Frame(frame, bg="white")
+        center.pack(expand=True)
+        grid = tk.Frame(center, bg="white")
+        grid.pack()
+
+        INDENT_X = 20
+
+        for i in range(12):
+            r = i // 4
+            c = i % 4
+            doornum = i + 1
+
+            btn_canvas = tk.Canvas(grid, width=180, height=180, bg="white", highlightthickness=0)
+            btn_canvas.grid(row=r, column=c, padx=INDENT_X, pady=15)
+
+            self.round_rect(btn_canvas, 10, 10, 170, 170, r=40, fill=peach, outline=peach)
+            btn_canvas.create_text(90, 90, text=str(doornum), fill="white", font=("Georgia", 32, "bold"))
+
+            btn_canvas.bind("<Button-1>", lambda e, dn=doornum: self.open_door_editor(dn))
 
     def open_door_editor(self, door_num):
         self.clear_frame()
@@ -291,24 +329,63 @@ class DoorEditor(tk.Frame):
         self.load_data()
 
     def _build_ui(self):
-        top_label = tk.Label(self, text=f"DOOR {self.door_num}", font=("Arial", 18, "bold"), bg="white")
-        top_label.pack(pady=10)
-        self.msg_label = tk.Label(self, text="+ Message", bg="white")
-        self.msg_label.pack(anchor="w", padx=20)
-        self.msg_text = ScrolledText(self, height=6, width=60)
-        self.msg_text.pack(padx=20, pady=5)
-        self.img_label = tk.Label(self, text="+ Image", bg="white")
-        self.img_label.pack(anchor="w", padx=20)
+        # Top card/frame with rounded rectangle style
+        self.canvas = tk.Canvas(self, width=760, height=500, bg="white", highlightthickness=0)
+        self.canvas.pack(pady=20)
+
+        # Draw rounded rectangle as background
+        self.master.round_rect(self.canvas, 10, 10, 750, 480, r=45, fill=peach, outline=peach)
+
+        # Title text
+        self.canvas.create_text(
+            380, 50,
+            text=f"DOOR {self.door_num}",
+            font=("Georgia", 24, "bold"),
+            fill="white"
+        )
+
+        # Message label
+        self.canvas.create_text(
+            60, 120,
+            text="Message:\n",
+            font=("Georgia", 16, "bold"),
+            fill="white",
+            anchor="w",
+        )
+
+        # Message input
+        self.msg_text = ScrolledText(self, height=6, width=48, font=("Georgia", 14))
+        self.canvas.create_window(380, 200, window=self.msg_text)
+
+        # Image label
+        self.canvas.create_text(
+            60, 280,
+            text="\nImage:",
+            font=("Georgia", 16, "bold"),
+            fill="white",
+            anchor="w"
+        )
+
+        # Image input and browse button
         img_frame = tk.Frame(self, bg="white")
-        img_frame.pack(padx=20, pady=5)
+        self.canvas.create_window(380, 340, window=img_frame)
+
         self.img_path_var = tk.StringVar()
-        self.img_entry = ttk.Entry(img_frame, textvariable=self.img_path_var, width=45)
-        self.img_entry.pack(side="left")
-        btn_browse = ttk.Button(img_frame, text="Browse...", command=self.browse_image)
-        btn_browse.pack(side="left", padx=6)
-        btn_save = ttk.Button(self, text="Save", command=self.save)
-        btn_save.pack(side="left", padx=20, pady=20)
-     
+        self.img_entry = ttk.Entry(img_frame, textvariable=self.img_path_var, width=40, font=("Georgia", 14))
+        self.img_entry.pack(side="left", padx=(0,6))
+        btn_browse = tk.Button(img_frame, 
+                               text="Browse...", 
+                               command=self.browse_image,
+                               bg=peach, fg="white", font=("Georgia", 14, "bold"), 
+                               activebackground=peach)
+        btn_browse.pack(side="left")
+
+        # Save button
+        btn_save = tk.Button(self, text="Save", command=self.save,
+                             bg=peach, fg="white", font=("Georgia", 16, "bold"), activebackground=peach)
+        self.canvas.create_window(380, 450, window=btn_save)
+
+
 
     def browse_image(self):
         path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.gif;*.bmp")])
