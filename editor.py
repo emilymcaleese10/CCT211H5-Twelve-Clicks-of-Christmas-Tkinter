@@ -49,13 +49,14 @@ class EditorApp(tk.Tk): # editor window
         self.title("12 CLICKS - Editor")
         self.geometry("900x700")
         self.configure(bg="white")
+        ensure_db()
         self.conn = sqlite3.connect(DB_FILE)
         self._load_fonts()
         self._build_menu()
         self.show_welcome()
 
     def _load_fonts(self):
-        self.title_font = ("Slight", 36, "bold")
+        self.title_font = ("Slight", 32, "bold")
         self.small_font = ("Georgia", 16, "bold")
 
     def _build_menu(self):
@@ -81,13 +82,13 @@ class EditorApp(tk.Tk): # editor window
         tree_label = tk.Label(root, image=self.tree_img, bg="white", borderwidth=0, highlightthickness=0)
         tree_label.place(x=10, rely=1.0, anchor="sw")   # bottom-left
 
-        # Star (top right)
         star_img = Image.open("shapes/star.png")
         star_img = star_img.resize((400, int(star_img.height * 400 / star_img.width)), Image.Resampling.LANCZOS)
         self.star_img = ImageTk.PhotoImage(star_img)
 
         star_label = tk.Label(root, image=self.star_img, bg="white", borderwidth=0, highlightthickness=0)
         star_label.place(relx=1.0, y=10, anchor="ne")   # top-right
+
     def round_rect(self, canvas, x1, y1, x2, y2, r=35, **kwargs):
             points = [
                 x1+r, y1,
@@ -428,7 +429,6 @@ class DoorEditor(tk.Frame):
 
 
 if __name__ == "__main__":
-    ensure_db()
     app = EditorApp()
     app.protocol("WM_DELETE_WINDOW", app.on_close)
     app.mainloop()
