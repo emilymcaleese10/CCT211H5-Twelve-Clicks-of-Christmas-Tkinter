@@ -187,20 +187,25 @@ class ViewerApp(tk.Tk):
         ttk.Label(test_frame, text="For Testing Purposes", background="#809059", foreground="white").pack(side="left", padx=20)
         ttk.Button(test_frame, text="Increment day", command=self.increment_day).pack(side="left", padx=6)
 
-        # # A frame that will hold the dynamic content (doors or door content)
-        # self.content_frame = tk.Frame(self, bg="#809059")
-        # self.content_frame.pack(expand=True, fill="both", padx=20, pady=20)
-
+     
         grid = tk.Frame(root, bg="#809059")
         grid.pack(expand=True)
+
+        INDENT_X = 20
 
         for i in range(12):
             r = i // 4
             c = i % 4
-            door_num = i + 1
-            btn = tk.Button(grid, text=str(door_num), width=12, height=6,
-                            command=lambda dn=door_num: self.attempt_open_door(dn))
-            btn.grid(row=r, column=c, padx=12, pady=12)
+            doornum = i + 1
+
+            btn_canvas = tk.Canvas(grid, width=180, height=180, bg=green, highlightthickness=0)
+            btn_canvas.grid(row=r, column=c, padx=INDENT_X, pady=15)
+
+            self.round_rect(btn_canvas, 10, 10, 170, 170, r=40, fill=peach, outline=peach)
+            btn_canvas.create_text(90, 90, text=str(doornum), fill="white", font=("Georgia", 32, "bold"))
+
+            btn_canvas.bind("<Button-1>", lambda e, dn=doornum: self.attempt_open_door(dn))
+
 
     def get_simulated_date(self):
         return date.today() + timedelta(days=self.sim_day_offset)
@@ -234,13 +239,13 @@ class ViewerApp(tk.Tk):
         if row:
             message, image_path, = row[0], row[1]
 
-        top = tk.Label(root, text=f"DOOR {door_num}", font=("Arial", 16, "bold"), bg="#809059", fg="white")
+        top = tk.Label(root, text=f"DOOR {door_num}", font=("Georgia", 35), bg="#809059", fg="white")
         top.pack(pady=8)
 
         # Date line
         dt = date(self.get_simulated_date().year, 12, date_day)
         suffix = self.ordinal_suffix(dt.day)
-        date_lbl = tk.Label(root, text=f"DATE: DECEMBER {dt.day}{suffix}", bg="#809059", fg="white")
+        date_lbl = tk.Label(root, text=f"DATE: DECEMBER {dt.day}{suffix}",font=("Georgia", 16), bg="#809059", fg="white")
         date_lbl.pack()
 
         # If message exists show it; else default message
@@ -249,12 +254,13 @@ class ViewerApp(tk.Tk):
             msg_box.insert(tk.END, message)
             msg_box.configure(state="disabled")
             msg_box.pack(pady=10)
+            
         else:
             # default message "Happy Christmas <name>, <number> days left!"
             # number = days until Dec 25 (25 - date)
             days_left = 25 - dt.day
             default_msg = f"Happy Christmas {self.viewer_name}, {days_left} days left!"
-            lbl = tk.Label(root, text=default_msg, bg="#809059", fg="white")
+            lbl = tk.Label(root, text=default_msg, font=("Georgia", 25), bg="#809059", fg="white")
             lbl.pack(pady=10)
 
         # Image if exists
@@ -269,9 +275,27 @@ class ViewerApp(tk.Tk):
             except Exception as e:
                 # image can't be opened
                 pass
+        
 
-        btn_done = ttk.Button(root, text="DONE", command=self.show_doors_page)
-        btn_done.pack(pady=12)
+        # Create button
+        btn_holder = tk.Canvas(root, width=230, height=70, bg=green, highlightthickness=0)
+        btn_holder.pack()
+
+        self.pill(btn_holder, 10, 10, 220, 60, fill=peach, outline=peach)
+        
+        btn = tk.Button(
+            btn_holder, text="DONE",
+            command=self.show_doors_page,
+            bg=peach, fg="white",
+            font=("Georgia", 16, "bold"),
+            relief="flat", activebackground=peach
+        )
+
+        btn_holder.create_window(115, 35, window=btn)
+
+        # ######
+        # btn_done = ttk.Button(root, text="DONE", command=self.show_doors_page)
+        # btn_done.pack(pady=12)
 
     def increment_day(self):
         # For testing: increment simulated day to next Advent start date then onward.
