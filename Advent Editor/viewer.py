@@ -7,6 +7,12 @@ import os
 from PIL import Image, ImageTk
 
 DB_FILE = "advent.db"
+
+# BASE_DIR = os.path.dirname(os.path.dirname(__file__)) DEAL WITH THIS
+# SHAPES_DIR = os.path.join(BASE_DIR, "shapes")
+# ASSETS_DIR = os.path.join(BASE_DIR, "assets")
+# DB_FILE = os.path.join(BASE_DIR, "advent.db")
+
 ASSETS_DIR = "assets"
 GREEN = "#809059"
 PEACH = "#dba582"
@@ -174,22 +180,21 @@ class ViewerApp(tk.Tk):
         self.show_background_images(root)
 
         # Title canvas for testing
-        test_frame = tk.Canvas(root, bg="#809059")
+        test_frame = tk.Canvas(root, bg=GREEN)
         test_frame.pack(side="top", fill="x", pady=10)
-        tk.Label(test_frame, text="TODAY'S DATE:", bg="#809059", fg="white").pack(side="left", padx=8)
+        tk.Label(test_frame, text="TODAY'S DATE:", bg="#809059", fg="white"
+                 ).pack(side="left", padx=8)
         self.curr_date_var = tk.StringVar()
         self._update_current_date_display()
-        self.curr_date_lbl = tk.Label(test_frame, textvariable=self.curr_date_var, bg="#809059", fg="white")
+        self.curr_date_lbl = tk.Label(test_frame, textvariable=self.curr_date_var, bg=GREEN, fg="white")
         self.curr_date_lbl.pack(side="left")
 
-      #  ttk.Label(test_frame, text="For Testing Purposes", background="#809059", foreground="white").pack(side="left", padx=20)
-        ttk.Button(test_frame, text="Increment day", command=self.increment_day).pack(side="left", padx=6)
-
-     
+        ttk.Button(test_frame, text="Increment day", command=self.increment_day
+                   ).pack(side="left", padx=6)
         grid = tk.Frame(root, bg="#809059")
         grid.pack(expand=True)
 
-        INDENT_X = 20
+        indent_x = 20
 
         for i in range(12):
             r = i // 4
@@ -197,10 +202,11 @@ class ViewerApp(tk.Tk):
             doornum = i + 1
 
             btn_canvas = tk.Canvas(grid, width=180, height=180, bg=GREEN, highlightthickness=0)
-            btn_canvas.grid(row=r, column=c, padx=INDENT_X, pady=15)
+            btn_canvas.grid(row=r, column=c, padx=indent_x, pady=15)
 
             self.round_rect(btn_canvas, 10, 10, 170, 170, r=40, fill=PEACH, outline=PEACH)
-            btn_canvas.create_text(90, 90, text=str(doornum), fill="white", font=("Georgia", 32, "bold"))
+            btn_canvas.create_text(90, 90, text=str(doornum),
+                                    fill="white", font=("Georgia", 32, "bold"))
 
             btn_canvas.bind("<Button-1>", lambda e, dn=doornum: self.attempt_open_door(dn))
 
@@ -237,13 +243,15 @@ class ViewerApp(tk.Tk):
         if row:
             message, image_path, = row[0], row[1]
 
-        top = tk.Label(root, text=f"DOOR {door_num}", font=("Georgia", 35), bg="#809059", fg="white")
+        top = tk.Label(root, text=f"DOOR {door_num}", font=("Georgia", 35),
+                        bg="#809059", fg="white")
         top.pack(pady=8)
 
         # Date line
         dt = date(self.get_simulated_date().year, 12, date_day)
         suffix = self.ordinal_suffix(dt.day)
-        date_lbl = tk.Label(root, text=f"DATE: DECEMBER {dt.day}{suffix}",font=("Georgia", 16), bg="#809059", fg="white")
+        date_lbl = tk.Label(root, text=f"DATE: DECEMBER {dt.day}{suffix}",
+                            font=("Georgia", 16), bg="#809059", fg="white")
         date_lbl.pack()
 
         # If message exists show it; else default message
@@ -254,8 +262,6 @@ class ViewerApp(tk.Tk):
             msg_box.pack(pady=10)
             
         else:
-            # default message "Happy Christmas <name>, <number> days left!"
-            # number = days until Dec 25 (25 - date)
             days_left = 25 - dt.day
             default_msg = f"Happy Christmas {self.viewer_name}, {days_left} days left!"
             lbl = tk.Label(root, text=default_msg, font=("Georgia", 25), bg="#809059", fg="white")
