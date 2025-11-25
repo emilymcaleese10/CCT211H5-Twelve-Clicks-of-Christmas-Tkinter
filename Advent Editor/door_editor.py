@@ -73,9 +73,14 @@ class DoorEditor(tk.Frame):
         btn_holder.create_window(115, 35, window=create_btn)
 
     def browse_image(self):
+        """
+        Browse files to find an image to upload for door
+        """
         file = filedialog.askopenfilename(
-            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif;*.bmp")]
-        )
+            filetypes=[
+                ("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")
+            ]
+    )
         if file:
             self.img_var.set(file)
 

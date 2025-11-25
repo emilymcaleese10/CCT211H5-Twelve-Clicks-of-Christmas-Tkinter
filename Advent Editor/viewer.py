@@ -183,7 +183,7 @@ class ViewerApp(tk.Tk):
         self.curr_date_lbl = tk.Label(test_frame, textvariable=self.curr_date_var, bg="#809059", fg="white")
         self.curr_date_lbl.pack(side="left")
 
-        ttk.Label(test_frame, text="For Testing Purposes", background="#809059", foreground="white").pack(side="left", padx=20)
+      #  ttk.Label(test_frame, text="For Testing Purposes", background="#809059", foreground="white").pack(side="left", padx=20)
         ttk.Button(test_frame, text="Increment day", command=self.increment_day).pack(side="left", padx=6)
 
      
@@ -221,7 +221,7 @@ class ViewerApp(tk.Tk):
         if today >= unlock:
             self.show_door_content(door_num)
         else:
-            messagebox.showerror("Not available", "Message unavailable!\nCome back later on door's date")
+            messagebox.showerror("Not available", "Message unavailable!\nCome back later on door's date.\nPress Increment Day to simulate openings.")
             self.show_doors_page()
 
     def show_door_content(self, door_num):
