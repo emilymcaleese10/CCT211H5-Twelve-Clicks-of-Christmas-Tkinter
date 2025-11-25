@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from tkinter.scrolledtext import ScrolledText
 import sqlite3
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 import os
 from PIL import Image, ImageTk
 
@@ -15,6 +15,7 @@ HEIGHT = 360
 
 # door 1 -> Dec 13, door 12 -> Dec 24
 DOOR_DATES = [(13 + i) for i in range(12)]
+
 
 def ensure_db_present():
     if not os.path.exists(DB_FILE):
@@ -47,8 +48,6 @@ class ViewerApp(tk.Tk):
 
     def clear_frame(self):
         for widget in self.winfo_children():
-            # if isinstance(widget, tk.Frame):
-            #     continue
             widget.destroy()   
     
     def show_background_images(self, root):
