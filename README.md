@@ -4,7 +4,7 @@ Twelve Clicks of Christmas is a Tkinter-based interactive advent calendar that c
 nostalgia, and personalization. The application allows users to design their own digital calendar by adding
 messages, images, and captions behind twelve themed windows / doors.
 
-# 🛠️ How to run the program
+# How to run the program
 
 To make your calendar, open the project folder containing `main.py`.
 

@@ -1,8 +1,10 @@
 import os
 
-DB_FILE = "advent.db"
-SHAPES_DIR = "shapes"
-ASSETS_DIR = "assets"
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+SHAPES_DIR = os.path.join(BASE_DIR, "shapes")
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
+DB_FILE = os.path.join(BASE_DIR, "advent.db")
+
 
 WINDOW_WIDTH = 760
 WINDOW_HEIGHT = 360
