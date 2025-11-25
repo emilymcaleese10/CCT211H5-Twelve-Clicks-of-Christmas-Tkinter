@@ -266,14 +266,14 @@ class EditorApp(tk.Tk):
             # copy information into folder
             shutil.copy(src_viewer, os.path.join(dest_folder, "viewer.py"))
 
-            shutil.copy(DB_FILE, os.path.join(dest_folder, DB_FILE))
+            shutil.copy(DB_FILE, os.path.join(dest_folder, os.path.basename(DB_FILE)))
 
             if os.path.isdir(ASSETS_DIR):
-                shutil.copytree(ASSETS_DIR, os.path.join(dest_folder, ASSETS_DIR))
+                shutil.copytree(ASSETS_DIR, os.path.join(dest_folder, "assets"))
 
 
             if os.path.isdir(SHAPES_DIR):
-                shutil.copytree(SHAPES_DIR, os.path.join(dest_folder, SHAPES_DIR))
+                shutil.copytree(SHAPES_DIR, os.path.join(dest_folder, "shapes"))
 
             # --- Create helper scripts (optional) ---
             bat_path = os.path.join(dest_folder, "windows.bat")
