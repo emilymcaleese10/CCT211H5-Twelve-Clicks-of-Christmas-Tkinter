@@ -292,14 +292,7 @@ class ViewerApp(tk.Tk):
 
         btn_holder.create_window(115, 35, window=btn)
 
-        # ######
-        # btn_done = ttk.Button(root, text="DONE", command=self.show_doors_page)
-        # btn_done.pack(pady=12)
-
     def increment_day(self):
-        # For testing: increment simulated day to next Advent start date then onward.
-        # If currently at real today, the spec asked: increment once -> Dec 13, increment again -> Dec 14 etc.
-        # We'll set sim_day_offset so the simulated date becomes Dec 13 of this year or move forward by one day.
         current = self.get_simulated_date()
         yr = current.year
         dec13 = date(yr, 12, 13)
