@@ -64,13 +64,13 @@ class DoorEditor(tk.Frame):
         btn_holder = tk.Canvas(self, width=230, height=70, bg="white", highlightthickness=0)
         btn_holder.pack()
         pill(btn_holder, 10, 10, 220, 60, fill=PEACH, outline=PEACH)
-        create_btn = tk.Button(
-            btn_holder, text="SAVE",
-            bg=PEACH, fg="white", font=("Georgia", 16, "bold"),
-            relief="flat", command=self.save,
-            activebackground=PEACH
+        text_id = btn_holder.create_text(
+            115, 35,
+            text="SAVE",
+            fill="white",
+            font=("Georgia", 16, "bold")
         )
-        btn_holder.create_window(115, 35, window=create_btn)
+        btn_holder.bind("<Button-1>", lambda e: self.save())
 
     def browse_image(self):
         """

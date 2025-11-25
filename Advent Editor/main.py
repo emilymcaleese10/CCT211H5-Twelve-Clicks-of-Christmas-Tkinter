@@ -108,12 +108,13 @@ class EditorApp(tk.Tk):
         btn_holder = tk.Canvas(frame, width=230, height=70, bg="white", highlightthickness=0)
         btn_holder.pack()
         pill(btn_holder, 10, 10, 220, 60, fill=PEACH, outline=PEACH)
-        create_btn = tk.Button(
-            btn_holder, text="SAVE",
-            bg=PEACH, fg="white", font=("Georgia", 16, "bold"),
-            relief="flat", command=self.show_name_page, activebackground=PEACH
+        text_id = btn_holder.create_text(
+            115, 35,
+            text="NEXT",
+            fill="white",
+            font=("Georgia", 16, "bold")
         )
-        btn_holder.create_window(115, 35, window=create_btn)
+        btn_holder.bind("<Button-1>", lambda e: self.show_name_page())
 
     def show_name_page(self):
         """
@@ -155,13 +156,13 @@ class EditorApp(tk.Tk):
         btn_holder = tk.Canvas(frame, width=230, height=70, bg="white", highlightthickness=0)
         btn_holder.pack()
         pill(btn_holder, 10, 10, 220, 60, fill=PEACH, outline=PEACH)
-        save_btn = tk.Button(
-            btn_holder, text="SAVE",
-            bg=PEACH, fg="white", font=("Georgia", 16, "bold"),
-            relief="flat", command=self.save_name_and_show_doors,
-            activebackground=PEACH
+        text_id = btn_holder.create_text(
+            115, 35,
+            text="SAVE",
+            fill="white",
+            font=("Georgia", 16, "bold")
         )
-        btn_holder.create_window(115, 35, window=save_btn)
+        btn_holder.bind("<Button-1>", lambda e: self.save_name_and_show_doors())
 
     def save_name_and_show_doors(self):
         """
