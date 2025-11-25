@@ -1,3 +1,6 @@
+"""
+imports sql library
+"""
 import sqlite3
 from config import DB_FILE, DOOR_DATES
 
@@ -9,6 +12,9 @@ class SqliteRepo:
         self.ensure_db()
 
     def ensure_db(self):
+        """
+        Creates database structure (doors)
+        """
         c = self.conn.cursor()
 
         c.execute("""
@@ -41,17 +47,26 @@ class SqliteRepo:
         self.conn.commit()
 
     def set_viewer_name(self, name: str):
+        """
+        changes user's name in db from input
+        """
         c = self.conn.cursor()
         c.execute("DELETE FROM viewer")
         c.execute("INSERT INTO viewer(name) VALUES (?)", (name,))
         self.conn.commit()
 
     def get_door(self, door_num: int):
+        """
+        gets data associated with door
+        """
         c = self.conn.cursor()
         c.execute("SELECT message, image_path FROM door WHERE door_num = ?", (door_num,))
         return c.fetchone()
 
     def update_door(self, door_num: int, message: str, img_path: str):
+        """
+        adds image to correct door
+        """
         c = self.conn.cursor()
         c.execute("""
             UPDATE door

@@ -34,7 +34,6 @@ class EditorApp(tk.Tk):
         self._build_menu()
         self.show_welcome()
 
-    # ---------------- UI helpers ---------------
     def _load_fonts(self):
         self.title_font = ("Slight", 32, "bold")
         self.small_font = ("Georgia", 16, "bold")
@@ -50,11 +49,17 @@ class EditorApp(tk.Tk):
         self.config(menu=menubar)
 
     def clear_frame(self):
+        """
+        Used for any window to clear page for new content
+        """
         for widget in self.winfo_children():
             if not isinstance(widget, tk.Menu):
                 widget.destroy()
 
     def show_background_images(self, root):
+        """
+        reused for all pages, shows the two background images of the tree and star
+        """
         tree = Image.open("shapes/tree.png")
         tree = tree.resize((300, int(tree.height * 300 / tree.width)), Image.Resampling.LANCZOS)
         self.tree_img = ImageTk.PhotoImage(tree)
@@ -65,8 +70,12 @@ class EditorApp(tk.Tk):
         self.star_img = ImageTk.PhotoImage(star)
         tk.Label(root, image=self.star_img, bg="white").place(relx=1.0, y=60, anchor="ne")
 
-    # ------------------------------ Pages ------------------------------
+    # ------------ Pages --------------------
+
     def show_welcome(self):
+        """
+        Introductory page that displays project title
+        """
         self.clear_frame()
         frame = tk.Frame(self, bg="white")
         frame.pack(expand=True, fill="both")
@@ -107,6 +116,9 @@ class EditorApp(tk.Tk):
         btn_holder.create_window(115, 35, window=create_btn)
 
     def show_name_page(self):
+        """
+        Page that prompts user to enter name for their calendar
+        """
         self.clear_frame()
         frame = tk.Frame(self, bg="white")
         frame.pack(expand=True, fill="both")
@@ -152,6 +164,9 @@ class EditorApp(tk.Tk):
         btn_holder.create_window(115, 35, window=save_btn)
 
     def save_name_and_show_doors(self):
+        """
+        store name in db and brings user to main page with door grid
+        """
         name = self.name_var.get().strip()
         if not name:
             messagebox.showwarning("Required", "Please enter a name.")
@@ -160,6 +175,9 @@ class EditorApp(tk.Tk):
         self.show_doors_page()
 
     def show_doors_page(self):
+        """
+        The actual code that shows the doors grid
+        """
         self.clear_frame()
 
         frame = tk.Frame(self, bg="white")
@@ -206,12 +224,17 @@ class EditorApp(tk.Tk):
             door_canvas.bind("<Button-1>", lambda e, n=doornum: self.open_door_editor(n))
 
     def open_door_editor(self, door_num: int):
+        """
+        Create door editor object
+        """
         self.clear_frame()
         DoorEditor(self, door_num)
 
     # ------------------------------ Export -------------------------
     def export_calendar(self):
-
+        """
+        Exports calendar into file containing .exe or .app file that user's friend can open
+        """
         # Ask user for export location
         save_dir = filedialog.askdirectory(title="Choose folder to place exported package")
         if not save_dir:
@@ -240,13 +263,11 @@ class EditorApp(tk.Tk):
         os.makedirs(dest_folder, exist_ok=True)
 
         try:
-            # Copy viewer.py
+            # copy information into folder
             shutil.copy(src_viewer, os.path.join(dest_folder, "viewer.py"))
 
-            # Copy DB
             shutil.copy(DB_FILE, os.path.join(dest_folder, DB_FILE))
 
-            # Copy assets
             if os.path.isdir(ASSETS_DIR):
                 shutil.copytree(ASSETS_DIR, os.path.join(dest_folder, ASSETS_DIR))
 

@@ -10,6 +10,9 @@ from database import SqliteRepo
 
 
 class DoorEditor(tk.Frame):
+    """
+    door class to create each door window and attach reltated information
+    """
     def __init__(self, master, door_num):
         super().__init__(master, bg="white")
         self.master = master
@@ -41,7 +44,7 @@ class DoorEditor(tk.Frame):
         canvas.create_window(380, 200, window=self.msg_text)
 
         canvas.create_text(
-            60, 280, text="Image:", font=("Georgia", 16, "bold"),
+            60, 280, text="\nImage:", font=("Georgia", 16, "bold"),
             fill="white", anchor="w"
         )
 
@@ -78,6 +81,9 @@ class DoorEditor(tk.Frame):
 
     # ------------------------------ DB ------------------------------
     def load_data(self):
+        """
+        get data related to door from db
+        """
         message, img = self.repo.get_door(self.door_num)
         if message:
             self.msg_text.insert("1.0", message)
@@ -85,13 +91,16 @@ class DoorEditor(tk.Frame):
             self.img_var.set(img)
 
     def save(self):
+        """
+        take information from user and store in db
+        """
         message = self.msg_text.get("1.0", tk.END).strip() or None
         img_path = self.img_var.get().strip() or None
 
         if img_path and os.path.exists(img_path):
             ext = os.path.splitext(img_path)[1]
             dest = os.path.join(ASSETS_DIR, f"door{self.door_num}{ext}")
-            
+
             if os.path.exists(dest):
                 os.remove(dest)
 

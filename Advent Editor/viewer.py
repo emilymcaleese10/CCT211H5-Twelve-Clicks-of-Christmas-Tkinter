@@ -281,7 +281,7 @@ class ViewerApp(tk.Tk):
         btn_holder.pack()
 
         self.pill(btn_holder, 10, 10, 220, 60, fill=peach, outline=peach)
-        
+
         btn = tk.Button(
             btn_holder, text="DONE",
             command=self.show_doors_page,
