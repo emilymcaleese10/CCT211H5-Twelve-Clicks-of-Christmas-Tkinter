@@ -8,8 +8,8 @@ from PIL import Image, ImageTk
 
 DB_FILE = "advent.db"
 ASSETS_DIR = "assets"
-green = "#809059"
-peach = "#dba582"
+GREEN = "#809059"
+PEACH = "#dba582"
 WIDTH = 760
 HEIGHT = 360
 
@@ -30,6 +30,9 @@ def ensure_db_present():
         conn.close()
 
 class ViewerApp(tk.Tk):
+    """
+    Class to run app that viewer can use to see calendar
+    """
     def __init__(self):
         super().__init__()
         self.title("12 CLICKS - Viewer")
@@ -41,62 +44,65 @@ class ViewerApp(tk.Tk):
         self.sim_day_offset = 0  # 0 means real current date
         self.load_viewer_name()
         self._build_ui()
-        
+
     def _load_fonts(self):
         self.title_font = ("Slight", 32, "bold")
         self.small_font = ("Georgia", 16, "bold")
 
     def clear_frame(self):
         for widget in self.winfo_children():
-            widget.destroy()   
-    
+            widget.destroy()
+
     def show_background_images(self, root):
+        """
+        Shows background images of dove and pears
+        """
         pear_img = Image.open("shapes/pears.png")
         pear_img = pear_img.resize((400, int(pear_img.height * 400 / pear_img.width)), Image.Resampling.LANCZOS)
         self.pear_img = ImageTk.PhotoImage(pear_img)
 
-        pear_label = tk.Label(root, image=self.pear_img, bg=green, borderwidth=0, highlightthickness=0)
+        pear_label = tk.Label(root, image=self.pear_img, bg=GREEN, borderwidth=0, highlightthickness=0)
         pear_label.place(x=10, rely=1.0, anchor="sw")   # bottom-left
 
         dove_img = Image.open("shapes/dove.png")
         dove_img = dove_img.resize((300, int(dove_img.height * 300 / dove_img.width)), Image.Resampling.LANCZOS)
         self.dove_img = ImageTk.PhotoImage(dove_img)
 
-        dove_label = tk.Label(root, image=self.dove_img, bg=green, borderwidth=0, highlightthickness=0)
+        dove_label = tk.Label(root, image=self.dove_img, bg=GREEN, borderwidth=0, highlightthickness=0)
         dove_label.place(relx=1.0, y=20, anchor="ne")   # top-right
         
     def round_rect(self, canvas, x1, y1, x2, y2, r=35, **kwargs):
-            points = [
-                x1+r, y1,
-                x2-r, y1,
-                x2, y1,
-                x2, y1+r,
-                x2, y2-r,
-                x2, y2,
-                x2-r, y2,
-                x1+r, y2,
-                x1, y2,
-                x1, y2-r,
-                x1, y1+r,
-                x1, y1
-            ]
-            return canvas.create_polygon(points, smooth=True, **kwargs)
-    
+        points = [
+            x1+r, y1,
+            x2-r, y1,
+            x2, y1,
+            x2, y1+r,
+            x2, y2-r,
+            x2, y2,
+            x2-r, y2,
+            x1+r, y2,
+            x1, y2,
+            x1, y2-r,
+            x1, y1+r,
+            x1, y1
+        ]
+        return canvas.create_polygon(points, smooth=True, **kwargs)
+
     def pill(self, canvas, x1, y1, x2, y2, **kwargs):
-            r = (y2 - y1) // 2
-            canvas.create_oval(x1, y1, x1 + 2*r, y2, **kwargs)
-            canvas.create_oval(x2 - 2*r, y1, x2, y2, **kwargs)
-            canvas.create_rectangle(x1 + r, y1, x2 - r, y2, **kwargs)
+        r = (y2 - y1) // 2
+        canvas.create_oval(x1, y1, x1 + 2*r, y2, **kwargs)
+        canvas.create_oval(x2 - 2*r, y1, x2, y2, **kwargs)
+        canvas.create_rectangle(x1 + r, y1, x2 - r, y2, **kwargs)
 
 
     def _build_ui(self):
-        root = tk.Frame(self, bg=green)
+        root = tk.Frame(self, bg=GREEN)
         root.pack(expand=True, fill="both")
         self.show_background_images(root)
 
-        card = tk.Canvas(root, width=760, height=360, bg=green, highlightthickness=0)
+        card = tk.Canvas(root, width=760, height=360, bg=GREEN, highlightthickness=0)
         card.pack(pady=40)
-        self.round_rect(card, 20, 20, 740, 340, r=45, fill=peach, outline=peach)
+        self.round_rect(card, 20, 20, 740, 340, r=45, fill=PEACH, outline=PEACH)
 
         card.create_text(
             WIDTH/2, 60,
@@ -122,34 +128,27 @@ class ViewerApp(tk.Tk):
             fill="white"
         )
 
-        # Create button
-        btn_holder = tk.Canvas(root, width=230, height=70, bg=green, highlightthickness=0)
+        # Button
+        btn_holder = tk.Canvas(root, width=230, height=70, bg=GREEN, highlightthickness=0)
         btn_holder.pack()
-
-        self.pill(btn_holder, 10, 10, 220, 60, fill=peach, outline=peach)
-        
-        btn = tk.Button(
-            btn_holder, text="OPEN",
-            command=self.show_doors_page,
-            bg=peach, fg="white",
-            font=("Georgia", 16, "bold"),
-            relief="flat", activebackground=peach
+        self.pill(btn_holder, 10, 10, 220, 60, fill=PEACH, outline=PEACH)
+        text_id = btn_holder.create_text(
+            115, 35,
+            text="SAVE",
+            fill="white",
+            font=("Georgia", 16, "bold")
         )
-
-        btn_holder.create_window(115, 35, window=btn)
+        btn_holder.bind("<Button-1>", lambda e: self.show_doors_page())
 
 
 
     def _update_current_date_display(self):
-        # Current real date + sim offset
         today = date.today() + timedelta(days=self.sim_day_offset)
-        # Show like "DECEMBER 13th"
         day_suffix = self.ordinal_suffix(today.day)
         self.curr_date_var.set(today.strftime(f"%B %d{day_suffix}"))
 
     @staticmethod
     def ordinal_suffix(n):
-        # basic suffix
         if 10 <= (n % 100) <= 20:
             return "th"
         if n % 10 == 1:
@@ -170,7 +169,7 @@ class ViewerApp(tk.Tk):
     def show_doors_page(self):
         self.clear_frame()
 
-        root = tk.Frame(self, bg=green)
+        root = tk.Frame(self, bg=GREEN)
         root.pack(expand=True, fill="both")
         self.show_background_images(root)
 
@@ -197,10 +196,10 @@ class ViewerApp(tk.Tk):
             c = i % 4
             doornum = i + 1
 
-            btn_canvas = tk.Canvas(grid, width=180, height=180, bg=green, highlightthickness=0)
+            btn_canvas = tk.Canvas(grid, width=180, height=180, bg=GREEN, highlightthickness=0)
             btn_canvas.grid(row=r, column=c, padx=INDENT_X, pady=15)
 
-            self.round_rect(btn_canvas, 10, 10, 170, 170, r=40, fill=peach, outline=peach)
+            self.round_rect(btn_canvas, 10, 10, 170, 170, r=40, fill=PEACH, outline=PEACH)
             btn_canvas.create_text(90, 90, text=str(doornum), fill="white", font=("Georgia", 32, "bold"))
 
             btn_canvas.bind("<Button-1>", lambda e, dn=doornum: self.attempt_open_door(dn))
@@ -227,7 +226,7 @@ class ViewerApp(tk.Tk):
     def show_door_content(self, door_num):
         self.clear_frame()
 
-        root = tk.Frame(self, bg=green)
+        root = tk.Frame(self, bg=GREEN)
         root.pack(expand=True, fill="both")
         self.show_background_images(root)
 
@@ -276,21 +275,17 @@ class ViewerApp(tk.Tk):
                 pass
         
 
-        # Create button
-        btn_holder = tk.Canvas(root, width=230, height=70, bg=green, highlightthickness=0)
+        # Button
+        btn_holder = tk.Canvas(root, width=230, height=70, bg=GREEN, highlightthickness=0)
         btn_holder.pack()
-
-        self.pill(btn_holder, 10, 10, 220, 60, fill=peach, outline=peach)
-
-        btn = tk.Button(
-            btn_holder, text="DONE",
-            command=self.show_doors_page,
-            bg=peach, fg="white",
-            font=("Georgia", 16, "bold"),
-            relief="flat", activebackground=peach
+        self.pill(btn_holder, 10, 10, 220, 60, fill=PEACH, outline=PEACH)
+        text_id = btn_holder.create_text(
+            115, 35,
+            text="SAVE",
+            fill="white",
+            font=("Georgia", 16, "bold")
         )
-
-        btn_holder.create_window(115, 35, window=btn)
+        btn_holder.bind("<Button-1>", lambda e: self.show_doors_page())
 
     def increment_day(self):
         current = self.get_simulated_date()
