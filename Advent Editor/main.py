@@ -60,12 +60,12 @@ class EditorApp(tk.Tk):
         """
         reused for all pages, shows the two background images of the tree and star
         """
-        tree = Image.open(os.path.join(SHAPES_DIR, "tree.png"))
+        tree = Image.open("shapes.png")
         tree = tree.resize((300, int(tree.height * 300 / tree.width)), Image.Resampling.LANCZOS)
         self.tree_img = ImageTk.PhotoImage(tree)
         tk.Label(root, image=self.tree_img, bg="white").place(x=10, rely=1.0, anchor="sw")
 
-        star = Image.open(os.path.join(SHAPES_DIR, "star.png"))
+        star = Image.open("shapes/star.png")
         star = star.resize((400, int(star.height * 400 / star.width)), Image.Resampling.LANCZOS)
         self.star_img = ImageTk.PhotoImage(star)
         tk.Label(root, image=self.star_img, bg="white").place(relx=1.0, y=60, anchor="ne")
@@ -92,7 +92,7 @@ class EditorApp(tk.Tk):
             fill="white"
         )
 
-        img = Image.open(os.path.join(SHAPES_DIR, "welcome_text.png"))
+        img = Image.open("shapes/welcome_text.png")
         img = img.resize((600, int(img.height * 600 / img.width)), Image.Resampling.LANCZOS)
         self.welcome_img = ImageTk.PhotoImage(img)
         card.create_image(WINDOW_WIDTH/2, 180, image=self.welcome_img)
@@ -187,7 +187,7 @@ class EditorApp(tk.Tk):
 
         top_bar = tk.Frame(frame, bg="white")
         top_bar.pack(fill="x")
-        img = Image.open(os.path.join(SHAPES_DIR, "edit_calendar.png"))
+        img = Image.open("shapes/edit_calendar.png")
         img = img.resize((600, int(img.height * 600 / img.width)), Image.Resampling.LANCZOS)
         self.title_img = ImageTk.PhotoImage(img)
 
