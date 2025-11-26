@@ -140,7 +140,7 @@ class ViewerApp(tk.Tk):
         self.pill(btn_holder, 10, 10, 220, 60, fill=PEACH, outline=PEACH)
         text_id = btn_holder.create_text(
             115, 35,
-            text="SAVE",
+            text="OPEN",
             fill="white",
             font=("Georgia", 16, "bold")
         )
