@@ -52,6 +52,8 @@ The recipient uses the `RUN.exe` or `RUN.app` file to open the calendar.
 5.  **Opening a Door:**
     * If the current system date is **on or after** the unlock date (Dec 13th for Door 1, Dec 24th for Door 12), they can click the door to see your message and image.
     * If the date is too early, they will receive a message saying **"Not available! Come back later on door's date."**
+  
+NOTE: If the recipient receives the export file on Mac.os, there is a terminal command shortcut (titled "Click to Reveal") that the recipient can click to run the .app right away in case the RUN.app has trouble loading.
 
 # This project fulfills all project requirements:
 ● Multiple Windows: The program will include separate windows for editing, viewing, and analytics
