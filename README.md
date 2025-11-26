@@ -4,7 +4,7 @@ Twelve Clicks of Christmas is a Tkinter-based interactive advent calendar that c
 nostalgia, and personalization. The application allows users to design their own digital calendar by adding
 messages, images, and captions behind twelve themed windows / doors.
 
-# Recommended
+# Recommended when running
 
 Please run both parts of app (viewer and editor) in full screen. You are also recommended to use a windows computer to run project (mac works but it's not as pretty and it's more awkward to run).
 
@@ -60,9 +60,3 @@ The recipient uses the `RUN.exe` file to open the calendar.
 There is a terminal command shortcut (titled "Click to Reveal") that the recipient can click to run the .app right away in case the RUN.app has trouble loading.
 If all else fails, run the python file viewer.py for the viewer app.
 
-● Persistence: All data (messages, media paths, captions, unlock dates) will be stored in a local SQLite
-database, ensuring that content remains available between sessions.
-● Interactivity: Each “door” will open with a click, revealing daily surprises that are date-locked to
-their assigned day, demonstrating logic-driven interactivity.
-● Export System: The editor will include an Export Viewer function that packages the data and a
-view-only interface for recipients to open their advent calendar in read-only mode.
